@@ -1,0 +1,40 @@
+from re import X
+from matplotlib.pylab import f
+import numpy as np
+
+Xg2 = np.array([1.9, 2.5, 3.2])
+Fxg2 = np.array([8.0, 14.0, 15.5])
+
+Xg3 = np.array([1.6, 1.9, 2.5, 3.2])
+Fxg3 = np.array([2.0, 8.0, 14.0, 15.5])
+
+Xg4 = np.array([1.6, 1.9, 2.5, 3.2,3.9])
+Fxg4 = np.array([2.0, 8.0, 14.0, 15.5, 9.0]) 
+
+def coeficientes_interpolacao(x, fx):
+    n = len(x)
+    coeficientes = fx.copy()
+
+    for j in range(1, n):
+        coeficientes[j:] = (coeficientes[j:] - coeficientes[j - 1]) / (x[j:] - x[j - 1])
+
+    return coeficientes
+
+def avaliar_interpolador(coeficientes, x, ponto):
+    resultado = coeficientes[0]
+    n = len(coeficientes) - 1
+
+    for i in range(1, n + 1):
+        termo = coeficientes[i]
+        for j in range(i):
+            termo *= (ponto - x[j])
+        resultado += termo
+
+    return resultado
+
+
+for grau in range(2, 5):
+    coeficientes = coeficientes_interpolacao(eval(f'Xg{grau}'), eval(f'Fxg{grau}'))
+    resultado = avaliar_interpolador(coeficientes, eval(f'Xg{grau}'), 2.9)
+    
+    print(f'Grau {grau}: f(2.9) = {resultado}')
